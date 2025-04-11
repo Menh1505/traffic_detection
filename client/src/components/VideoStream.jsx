@@ -12,6 +12,10 @@ const VideoStream = () => {
     useEffect(() => {
         // Khởi tạo kết nối socket
         socketRef.current = io('http://localhost:8080');
+        
+        socketRef.current.on('connect_error', (err) => {
+            setError('Connection error: ' + err.message);
+        });
 
         socketRef.current.on('connect', () => {
             setIsConnected(true);
