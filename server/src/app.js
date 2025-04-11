@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // init db
-require("./dbs/init.mongodb");
+// require("./dbs/init.mongodb");
 
 // init routes
 app.use("/", require("./routes"));
