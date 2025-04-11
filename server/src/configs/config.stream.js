@@ -9,4 +9,4 @@ const streamConfig = {
   },
 };
 
-export default streamConfig;
+module.exports = streamConfig;
