@@ -11,7 +11,7 @@ const VideoStream = () => {
 
     useEffect(() => {
         // Khởi tạo kết nối socket
-        socketRef.current = io('http://localhost:4000');
+        socketRef.current = io('http://localhost:8080');
 
         socketRef.current.on('connect', () => {
             setIsConnected(true);
