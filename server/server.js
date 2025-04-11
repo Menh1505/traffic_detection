@@ -1,5 +1,6 @@
 const { app, io } = require("./src/app");
 const Stream = require("node-rtsp-stream");
+const streamConfig = require("./src/configs/config.stream");
 
 require("dotenv").config();
 
