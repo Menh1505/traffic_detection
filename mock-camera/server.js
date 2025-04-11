@@ -5,12 +5,12 @@ const server = new RtspServer({
   serverPort: 5554,
   clientPort: 6554,
   rtpPortStart: 10000,
-  rtpPortEnd: 10050,
+  rtpPortEnd: 11000,
 });
 
 const videoPath = "./videos/test.mp4"; // your video path
 
-async function run() {
+async function start() {
   try {
     await server.start();
     console.log("RTSP server started on rtsp://localhost:5554/live");
@@ -28,10 +28,11 @@ async function run() {
       })
       .on("end", function () {
         console.log("FFmpeg process finished.");
-      });
+      })
+      .run();
   } catch (e) {
     console.error(e);
   }
 }
 
-run();
+start();
