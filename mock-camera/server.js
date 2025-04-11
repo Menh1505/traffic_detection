@@ -77,4 +77,16 @@ async function run() {
   }
 }
 
+// Handle process termination signals
+process.on('SIGINT', async () => {
+  console.log("\nShutting down server...");
+  try {
+    await server.stop();
+    console.log("Server stopped successfully");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error stopping server:", error);
+    process.exit(1);
+  }
+});
 run();
