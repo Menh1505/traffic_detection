@@ -4,35 +4,14 @@ const portscanner = require("portscanner");
 
 const videoPath = "./videos/test.mp4"; // your video path
 
-// Find available port for the RTSP server
-async function findAvailablePort(startPort, endPort) {
-  return new Promise((resolve, reject) => {
-    portscanner.findAPortNotInUse(startPort, endPort, "127.0.0.1", (error, port) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(port);
-      }
-    });
-  });
-}
-
 // Create server with available ports
 async function createServer() {
   try {
-    // Find port for server
-    const serverPort = await findAvailablePort(5000, 6000);
-    // Find port for client
-    const clientPort = await findAvailablePort(6001, 7000);
-    // Find range port RTP
-    const rtpStart = await findAvailablePort(10000, 15000);
-    const rtpEnd = rtpStart + 1000; // Set range 1000 port
-
     const server = new RtspServer({
-      serverPort: serverPort,
-      clientPort: clientPort,
-      rtpPortStart: rtpStart,
-      rtpPortEnd: rtpEnd,
+      serverPort: 5554,
+      clientPort: 6554,
+      rtpPortStart: 10000,
+      rtpPortCount: 10000,
     });
 
     return { server, serverPort };
