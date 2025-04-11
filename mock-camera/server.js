@@ -1,5 +1,6 @@
 const RtspServer = require("rtsp-streaming-server").default;
 const ffmpeg = require("fluent-ffmpeg");
+const portscanner = require("portscanner");
 
 const videoPath = "./videos/test.mp4"; // your video path
 
