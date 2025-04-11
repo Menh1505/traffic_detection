@@ -14,7 +14,7 @@ async function createServer() {
       rtpPortCount: 10000,
     });
 
-    return { server, serverPort };
+    return server;
   } catch (error) {
     throw new Error(`Cannot find available port: ${error.message}`);
   }
@@ -24,18 +24,18 @@ async function createServer() {
 async function run() {
   try {
     // init server
-    const { server, serverPort } = await createServer();
+    const server = await createServer();
 
     // start server
     await server.start();
-    console.log(`RTSP server started on rtsp://localhost:${serverPort}/live`);
+    console.log(`RTSP server started on rtsp://localhost:5554/live`);
 
     // wait for server to start before starting ffmpeg
     setTimeout(() => {
       ffmpeg(videoPath)
         .inputOptions("-stream_loop -1")
         .outputOptions("-f rtsp")
-        .output(`rtsp://localhost:${serverPort}/live`)
+        .output(`rtsp://localhost:5554/live`)
         .on("start", function (commandLine) {
           console.log("FFmpeg process started:", commandLine);
         })
