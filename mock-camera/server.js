@@ -51,11 +51,6 @@ async function run() {
     await server.start();
     console.log(`RTSP server started on rtsp://localhost:${serverPort}/live`);
 
-    // error handling for server
-    server.on("error", (error) => {
-      console.error("Server error:", error);
-    });
-
     // wait for server to start before starting ffmpeg
     setTimeout(() => {
       ffmpeg(videoPath)
@@ -79,7 +74,7 @@ async function run() {
 }
 
 // Handle process termination signals
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   console.log("\nShutting down server...");
   try {
     await server.stop();
@@ -90,4 +85,5 @@ process.on('SIGINT', async () => {
     process.exit(1);
   }
 });
+
 run();
