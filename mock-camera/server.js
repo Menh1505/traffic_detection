@@ -1,6 +1,8 @@
 const RtspServer = require("rtsp-streaming-server").default;
 const ffmpeg = require("fluent-ffmpeg");
 
+const videoPath = "./videos/test.mp4"; // your video path
+
 // Find available port for the RTSP server
 async function findAvailablePort(startPort, endPort) {
   return new Promise((resolve, reject) => {
@@ -37,8 +39,6 @@ async function createServer() {
     throw new Error(`Cannot find available port: ${error.message}`);
   }
 }
-
-const videoPath = "./videos/test.mp4"; // your video path
 
 // main function to run the server and stream video
 async function run() {
