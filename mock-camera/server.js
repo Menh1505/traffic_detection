@@ -16,20 +16,22 @@ async function start() {
     console.log("RTSP server started on rtsp://localhost:5554/live");
 
     // Setting ffmpeg to stream the video to the RTSP server
-    ffmpeg(videoPath)
-      .inputOptions("-stream_loop -1") // loop video
-      .outputOptions("-f rtsp")
-      .output("rtsp://localhost:5554/live")
-      .on("start", function (commandLine) {
-        console.log("FFmpeg process started: " + commandLine);
-      })
-      .on("error", function (err) {
-        console.error("FFmpeg error: " + err.message);
-      })
-      .on("end", function () {
-        console.log("FFmpeg process finished.");
-      })
-      .run();
+    setTimeout(() => {
+      ffmpeg(videoPath)
+        .inputOptions("-stream_loop -1") // loop video
+        .outputOptions("-f rtsp")
+        .output("rtsp://localhost:5554/live")
+        .on("start", function (commandLine) {
+          console.log("FFmpeg process started: " + commandLine);
+        })
+        .on("error", function (err) {
+          console.error("FFmpeg error: " + err.message);
+        })
+        .on("end", function () {
+          console.log("FFmpeg process finished.");
+        })
+        .run();
+    }, 2000); // Delay to ensure server is ready
   } catch (e) {
     console.error(e);
   }

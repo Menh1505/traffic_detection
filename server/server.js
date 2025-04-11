@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
   socket.on("start_stream", () => {
     try {
       if (!stream) {
-        // stream = new Stream(streamConfig);
+        stream = new Stream(streamConfig);
         console.log("Stream started");
       }
     } catch (error) {
