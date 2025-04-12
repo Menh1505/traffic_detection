@@ -18,6 +18,10 @@ const VideoPlayer = () => {
       hlsRef.current.loadSource('http://localhost:8080/streams/output.m3u8');
       hlsRef.current.attachMedia(videoRef.current);
 
+      hlsRef.current.on(Hls.Events.ERROR, (event, data) => {
+        console.error("HLS.js error:", data);
+      });
+      
       hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
         videoRef.current.play();
       });
