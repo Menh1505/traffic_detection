@@ -8,8 +8,7 @@ const ffmpegConfig = {
       options: [
         "-c:v",
         "copy", // Giữ nguyên codec video
-        "-c:a",
-        "aac", // Chuyển đổi audio sang AAC
+        "-an", // Không có âm thanh
         "-hls_time",
         "2", // Độ dài segment 2 giây
         "-hls_list_size",
