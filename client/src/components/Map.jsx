@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import cameraIcon from '../assets/camera-icon.png';
 import VideoStream from './VideoStream'; 
+import { useEffect, useState } from 'react';
 
 
 const customIcon = new L.Icon({
@@ -34,6 +35,17 @@ const getTrafficStyle = (congestionLevel) => {
 const trafficStyle = getTrafficStyle(congestionLevel);
 
 export default function Map() {
+    const [isStuck, setIsStuck] = useState(false); // Trạng thái tắc đường
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // Giả lập trạng thái tắc đường
+            setIsStuck((prev) => !prev);
+        }, 5000); // Cập nhật trạng thái mỗi 5 giây
+
+        return () => clearInterval(interval); // Dọn dẹp khi component unmount
+    }, []); // Hook để theo dõi trạng thái tắc đường
+
     return (
         <div style={{ height: '100%', width: '100%' }}> {/* Container bao ngoài */}
             <MapContainer center={[10.80150127059038, 106.71146295089262]} zoom={18} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}> {/* Style cho MapContainer */}
@@ -47,7 +59,7 @@ export default function Map() {
                         <VideoStream />
                     </Popup>
                 </Marker>
-                <Polyline pathOptions={trafficStyle} positions={roadCoordinates} />
+                {isStuck ? <Polyline pathOptions={trafficStyle} positions={roadCoordinates} /> : null}
             </MapContainer>
         </div>
     );
