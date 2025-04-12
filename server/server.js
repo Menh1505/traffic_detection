@@ -4,6 +4,7 @@ import ffmpegConfig from "./src/configs/config.ffmpeg.js";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import dotenv from "dotenv";
+import cleanOldSegments from "./src/helpers/cleanOldSegment.js";
 
 dotenv.config();
 
@@ -39,6 +40,9 @@ function startStreaming() {
     .save(ffmpegConfig.output.hls.path);
 
   stream.run();
+  setInterval(() => {
+    cleanOldSegments('./streams'); 
+  }, 10000); // Clean old segments every 1 minute
 }
 
 app.listen(process.env.PORT || 8080, () => {

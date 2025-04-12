@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // Delete old segments in the directory
-function cleanOldSegments(directory) {
+export default function cleanOldSegments(directory) {
   const dir = directory || "./streams";
   fs.readdir(dir, (err, files) => {
     if (err) {
@@ -24,6 +24,3 @@ function cleanOldSegments(directory) {
     });
   });
 }
-
-// Gọi hàm xóa file định kỳ mỗi 1 phút
-setInterval(cleanOldSegments, 60000);
