@@ -38,12 +38,9 @@ function startStreaming() {
     .save(ffmpegConfig.output.hls.path);
 
   stream.run();
-  setInterval(() => {
-    cleanOldSegments("./streams");
-  }, 30000); // Clean old segments every 30s
-  setInterval(() => {
-    monitorDiskUsage("./streams");
-  }, 300000);
+
+  setInterval(() => {cleanOldSegments("./streams");}, 30000); // Clean old segments every 30s
+  setInterval(() => {monitorDiskUsage("./streams");}, 300000); // Monitor disk usage every 5 minutes
 }
 
 app.listen(process.env.PORT || 8080, () => {
