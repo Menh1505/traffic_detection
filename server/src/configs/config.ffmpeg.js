@@ -1,6 +1,6 @@
 const ffmpegConfig = {
   input: {
-    rtsp: "rtsp://localhost:5554/live",
+    rtsp: "rtsp://localhost:6554/live",
   },
   output: {
     hls: {

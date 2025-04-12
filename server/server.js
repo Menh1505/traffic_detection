@@ -1,42 +1,37 @@
 const app = require("./src/app");
-const Stream = require("node-rtsp-stream");
-const streamConfig = require("./src/configs/config.stream");
-const http = require("http");
-const socketIo = require("socket.io");
+const ffmpegConfig = require("./src/configs/config.ffmpeg");
+
 
 require("dotenv").config();
 
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
+app.use(
+  cors({
     origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+    methods: ["GET"],
+  })
+);
 
-io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id);
-  let stream = null;
+// serve files HLS
+app.use("/streams", express.static("streams"));
 
-  socket.on("start_stream", () => {
-    try {
-      if (!stream) {
-        stream = new Stream(streamConfig);
-        console.log("Stream started");
-      }
-    } catch (error) {
-      socket.emit("stream_error", { message: "Failed to start stream" });
-    }
-  });
+// Init stream HLS
+function startStreaming() {
+  const stream = ffmpeg(ffmpegConfig.input.rtsp)
+    .outputOptions(ffmpegConfig.output.hls.options)
+    .output(ffmpegConfig.output.hls.path)
+    .on("start", () => {
+      console.log("Stream started");
+    })
+    .on("error", (err) => {
+      console.error("Stream error:", err);
+      // Auto restart stream on error every 5 seconds
+      setTimeout(startStreaming, 5000);
+    });
 
-  socket.on("disconnect", () => {
-    if (stream) {
-      stream.stop();
-      stream = null;
-    }
-  });
-});
+  stream.run();
+}
 
-server.listen(process.env.PORT || 8080, () => {
+app.listen(process.env.PORT || 8080, () => {
   console.log("Server is running on port", process.env.PORT || 8080);
+  startStreaming();
 });
