@@ -5,6 +5,7 @@ import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import dotenv from "dotenv";
 import cleanOldSegments from "./src/helpers/cleanOldSegment.js";
+import monitorDiskUsage from "./src/helpers/monitorDiskUsage.js";
 
 dotenv.config();
 
@@ -38,8 +39,11 @@ function startStreaming() {
 
   stream.run();
   setInterval(() => {
-    cleanOldSegments('./streams'); 
-  }, 10000); // Clean old segments every 1 minute
+    cleanOldSegments("./streams");
+  }, 30000); // Clean old segments every 30s
+  setInterval(() => {
+    monitorDiskUsage("./streams");
+  }, 300000);
 }
 
 app.listen(process.env.PORT || 8080, () => {
