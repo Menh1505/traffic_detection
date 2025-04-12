@@ -26,9 +26,6 @@ function startStreaming() {
     .on("start", () => {
       console.log("Stream started");
     })
-    .on("stderr", (stderrLine) => {
-      console.log(`FFmpeg stderr: ${stderrLine}`);
-    })
     .on("error", (err) => {
       console.error("Stream error:", err);
       // Auto restart stream on error every 5 seconds
