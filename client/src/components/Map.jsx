@@ -1,7 +1,8 @@
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import cameraIcon from '../assets/camera-icon.png'; // Đường dẫn đến icon tùy chỉnh
+import cameraIcon from '../assets/camera-icon.png';
+import VideoStream from './VideoStream'; 
 
 
 const customIcon = new L.Icon({
@@ -41,9 +42,9 @@ export default function Map() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Marker position={[10.801296448702058, 106.71170362134797]} icon={customIcon}>
-                    <Popup>
-                        <h2>Camera Hang Xanh</h2>
-
+                    <Popup style={{ width: '4500px' }}>
+                        <h2>Camera</h2>
+                        <VideoStream />
                     </Popup>
                 </Marker>
                 <Polyline pathOptions={trafficStyle} positions={roadCoordinates} />

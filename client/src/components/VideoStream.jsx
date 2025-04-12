@@ -34,8 +34,9 @@ const VideoPlayer = () => {
     <div>
       <video
         ref={videoRef}
-        controls
         style={{ width: '100%', maxWidth: '800px' }}
+        autoPlay
+        muted
       />
     </div>
   );

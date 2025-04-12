@@ -68,3 +68,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.leaflet-popup-content-wrapper {
+  width: 450px !important; /* Thay đổi kích thước chiều rộng */
+}
+
+.leaflet-popup-content {
+  width: 400px !important; /* Nội dung bên trong */
+}
