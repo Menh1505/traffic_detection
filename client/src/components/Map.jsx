@@ -2,7 +2,7 @@ import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import cameraIcon from '../assets/camera-icon.png';
-import VideoStream from './VideoStream'; 
+import VideoPlayer from './hlsVideo'; 
 import { useEffect, useState } from 'react';
 
 
@@ -56,7 +56,7 @@ export default function Map() {
                 <Marker position={[10.801296448702058, 106.71170362134797]} icon={customIcon}>
                     <Popup style={{ width: '4500px' }}>
                         <h2>Camera</h2>
-                        <VideoStream />
+                        <VideoPlayer />
                     </Popup>
                 </Marker>
                 {isStuck ? <Polyline pathOptions={trafficStyle} positions={roadCoordinates} /> : null}
