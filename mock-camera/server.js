@@ -54,7 +54,7 @@ async function run() {
       ffmpeg(videoPath)
         .inputOptions("-stream_loop -1")
         .outputOptions(["-f rtsp", "-an"])
-        .output(`rtsp://${localIp}:6554/live`)
+        .output(`rtsp://${localIp}:5554/live`)
         .on("start", function (commandLine) {
           console.log("FFmpeg process started:", commandLine);
         })
