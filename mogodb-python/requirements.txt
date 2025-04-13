@@ -1,5 +1,0 @@
-flask
-pymongo
-ultralytics
-opencv-python
-pandas
