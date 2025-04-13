@@ -2,7 +2,7 @@ const RtspServer = require("rtsp-streaming-server").default;
 const ffmpeg = require("fluent-ffmpeg");
 const os = require("os");
 
-const videoPath = "./videos/test.mp4"; // your video path
+const videoPath = "./videos/0413.mp4"; // your video path
 
 // Hàm lấy địa chỉ IP hiện tại
 function getLocalIpAddress() {
