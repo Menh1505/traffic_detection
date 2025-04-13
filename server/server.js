@@ -1,12 +1,8 @@
 import app from "./src/app.js";
 import express from "express";
-import ffmpegConfig from "./src/configs/config.ffmpeg.js";
 import streamConfig from "./src/configs/config.stream.js";
-import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import dotenv from "dotenv";
-import cleanOldSegments from "./src/helpers/cleanOldSegment.js";
-import monitorDiskUsage from "./src/helpers/monitorDiskUsage.js";
 import Stream from "node-rtsp-stream";
 
 dotenv.config();
@@ -21,7 +17,7 @@ app.use(
 // serve files HLS
 app.use("/streams", express.static("streams"));
 
-const stream = new Stream(streamConfig);
+stream = new Stream(streamConfig);
 
 
 // Init stream HLS
