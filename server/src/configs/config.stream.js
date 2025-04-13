@@ -1,6 +1,6 @@
 const streamConfig = {
   name: "camera_stream",
-  streamUrl: "rtsp://localhost:5554/live", // URL của camera
+  streamUrl: "rtsp://192.168.1.9:6554/live", // URL của camera
   wsPort: 9999,
   ffmpegOptions: {
     "-stats": "",
