@@ -1,187 +1,89 @@
 const RtspServer = require("rtsp-streaming-server").default;
 const ffmpeg = require("fluent-ffmpeg");
-const portscanner = require("portscanner");
 
-const videoPath = "./videos/test.mp4";
+const videoPath = "./videos/test.mp4"; // your video path
 
-// Configuration options
-const CONFIG = {
-  server: {
-    serverPort: 5554,
-    clientPort: 6554,
-    rtpPortStart: 10000,
-    rtpPortCount: 10000,
-    keepAliveTimeout: 30000,    // 30 seconds timeout for keep-alive
-    streamKeepAlive: true,      // Enable stream keep-alive
-    maxRetries: 3,              // Maximum reconnection attempts
-    retryDelay: 5000,           // 5 seconds delay between retries
-  },
-  ffmpeg: {
-    bufferSize: "2048k",        // Buffer size for streaming
-    keyframeInterval: 52,       // Keyframe interval
-    bitrate: "2000k",           // Default bitrate
-    framerate: 30,              // Default framerate
-  }
-};
-
-let ffmpegProcess = null;
-let server = null;
-
-// Create server with enhanced configuration
+// Create server with available ports
 async function createServer() {
   try {
-    server = new RtspServer({
-      ...CONFIG.server,
-      // Additional stability options
-      rtspTcpTransport: true,   // Use TCP for more stable transmission
-      allowedOrigins: ["*"],    // Configure allowed origins
-      logLevel: "info"          // Enable logging
-    });
-
-    // Add connection monitoring
-    server.on('connection', (client) => {
-      console.log(`Client connected: ${client.id}`);
-      
-      client.on('error', (err) => {
-        console.error(`Client error: ${client.id}`, err.message);
-      });
-      
-      client.on('close', () => {
-        console.log(`Client disconnected: ${client.id}`);
-      });
+    const server = new RtspServer({
+      serverPort: 5554,
+      clientPort: 6554,
+      rtpPortStart: 10000,
+      rtpPortCount: 10000,
+      keepAliveTimeout: 30000,
+      keepAlive: true,
+      maxRetries: 3,
+      retryDelay: 5000,
     });
 
     return server;
   } catch (error) {
-    throw new Error(`Server initialization failed: ${error.message}`);
+    throw new Error(`Cannot find available port: ${error.message}`);
   }
 }
 
-// Enhanced FFmpeg streaming function
-function startFFmpeg() {
-  try {
-    ffmpegProcess = ffmpeg(videoPath)
-      .inputOptions([
-        "-stream_loop -1",       // Loop the video
-        "-re",                   // Read input at native framerate
-        "-fflags +genpts",       // Generate presentation timestamps
-        "-rtsp_transport tcp"    // Use TCP for transmission
-      ])
-      .outputOptions([
-        "-f rtsp",              // Force RTSP format
-        "-movflags faststart",   // Enable fast start
-        `-g ${CONFIG.ffmpeg.keyframeInterval}`,     // Set keyframe interval
-        `-bufsize ${CONFIG.ffmpeg.bufferSize}`,     // Set buffer size
-        `-b:v ${CONFIG.ffmpeg.bitrate}`,           // Set video bitrate
-        `-r ${CONFIG.ffmpeg.framerate}`,           // Set framerate
-        "-preset ultrafast",     // Use ultrafast encoding preset
-        "-tune zerolatency"     // Optimize for low latency
-      ])
-      .output(`rtsp://localhost:${CONFIG.server.serverPort}/live`)
-      .on("start", (commandLine) => {
-        console.log("FFmpeg process started:", commandLine);
-      })
-      .on("error", (err) => {
-        console.error("FFmpeg error:", err.message);
-        // Attempt to restart FFmpeg on error
-        handleFFmpegError();
-      })
-      .on("end", () => {
-        console.log("FFmpeg process finished");
-      });
-
-    ffmpegProcess.run();
-  } catch (error) {
-    console.error("Error starting FFmpeg:", error);
-    handleFFmpegError();
-  }
-}
-
-// Error handling for FFmpeg
-let retryCount = 0;
-async function handleFFmpegError() {
-  if (retryCount < CONFIG.server.maxRetries) {
-    retryCount++;
-    console.log(`Attempting to restart FFmpeg (Attempt ${retryCount}/${CONFIG.server.maxRetries})`);
-    
-    // Exponential backoff for retry delay
-    const delay = CONFIG.server.retryDelay * Math.pow(2, retryCount - 1);
-    await new Promise(resolve => setTimeout(resolve, delay));
-    
-    startFFmpeg();
-  } else {
-    console.error("Maximum retry attempts reached. Please check the stream configuration.");
-  }
-}
-
-// Enhanced server monitoring
-function setupServerMonitoring() {
-  // Heartbeat mechanism
-  setInterval(() => {
-    if (server && server.isRunning) {
-      console.log("Server heartbeat: OK");
-    } else {
-      console.error("Server heartbeat: Failed");
-      restartServer();
-    }
-  }, CONFIG.server.keepAliveTimeout);
-}
-
-// Server restart function
-async function restartServer() {
-  try {
-    if (server) {
-      await server.stop();
-    }
-    server = await createServer();
-    await server.start();
-    startFFmpeg();
-  } catch (error) {
-    console.error("Error restarting server:", error);
-  }
-}
-
-// Main function with enhanced error handling
+// main function to run the server and stream video
 async function run() {
   try {
-    server = await createServer();
+    // init server
+    const server = await createServer();
+
+    // start server
     await server.start();
-    console.log(`RTSP server started on rtsp://localhost:${CONFIG.server.serverPort}/live`);
-    
-    setupServerMonitoring();
-    
-    // Start FFmpeg after server initialization
-    setTimeout(startFFmpeg, 2000);
+    console.log(`RTSP server started on rtsp://localhost:5554/live`);
+
+    // wait for server to start before starting ffmpeg
+    setTimeout(() => {
+      ffmpeg(videoPath)
+        .inputOptions("-stream_loop -1") // Lặp lại video vô hạn
+        .outputOptions([
+          "-c:v libx264", // Sử dụng codec video libx264
+          "-f rtsp", // Định dạng RTSP
+          "-rtsp_transport tcp", // Sử dụng giao thức TCP để ổn định hơn
+          "-preset ultrafast", // Tăng tốc độ mã hóa (giảm độ trễ)
+          "-tune zerolatency", // Tối ưu hóa cho streaming thời gian thực
+          "-g 50", // Đặt khoảng cách giữa các keyframe (GOP size)
+          "-bufsize 64k", // Giảm kích thước buffer để giảm độ trễ
+          "-maxrate 1M", // Giới hạn bitrate tối đa (1 Mbps)
+          "-an", // Không có âm thanh
+        ])
+        .output(`rtsp://localhost:5554/live`)
+        .on("start", function (commandLine) {
+          console.log("FFmpeg process started:", commandLine);
+        })
+        .on("error", function (err) {
+          console.error("FFmpeg error:", err.message);
+        })
+        .on("end", function () {
+          console.log("FFmpeg process finished");
+        })
+        .run();
+    }, 2000);
+
+    // Check server status every minute
+    setInterval(() => {
+      if (!server.isRunning) {
+        console.error("Server is not running. Restarting...");
+        run();
+      }
+    }, 60000); // Kiểm tra trạng thái server mỗi phút
   } catch (error) {
-    console.error("Error in main execution:", error);
-    process.exit(1);
+    console.error("Error starting server:", error);
   }
 }
 
-// Enhanced process termination handling
-async function cleanup() {
+// Handle process termination signals
+process.on("SIGINT", async () => {
   console.log("\nShutting down server...");
   try {
-    if (ffmpegProcess) {
-      ffmpegProcess.kill();
-    }
-    if (server) {
-      await server.stop();
-    }
+    await server.stop();
     console.log("Server stopped successfully");
     process.exit(0);
   } catch (error) {
-    console.error("Error during cleanup:", error);
+    console.error("Error stopping server:", error);
     process.exit(1);
   }
-}
-
-// Handle various termination signals
-process.on("SIGINT", cleanup);
-process.on("SIGTERM", cleanup);
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught exception:", error);
-  cleanup();
 });
 
 run();
