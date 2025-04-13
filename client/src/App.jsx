@@ -1,5 +1,4 @@
 import Map from './components/Map.jsx'
-import VideoStream from './components/VideoStream.jsx'
 
 function App() {
 

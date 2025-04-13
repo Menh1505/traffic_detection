@@ -1,34 +1,35 @@
-// components/JSMpegPlayer.jsx
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
-function JSMpegPlayer() {
+const JSMpegPlayer = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // Load JSMpeg from global script
-    const script = document.createElement("script");
-    script.src = "/js/jsmpeg.min.js";
-    script.onload = () => {
-      // Gọi player sau khi script đã tải
-      new window.JSMpeg.Player("ws://localhost:9999", {
-        canvas: canvasRef.current,
-      });
-    };
+    // Tạo thẻ script để tải jsmpeg.min.js
+    const script = document.createElement('script');
+    script.src = '/jsmpeg.min.js'; // Đường dẫn đến file jsmpeg.min.js
+    script.async = true;
+
+    // Thêm script vào document
     document.body.appendChild(script);
 
+    // Khởi tạo player khi script đã được tải
+    script.onload = () => {
+      new window.JSMpeg.Player('ws://localhost:9999', {
+        canvas: canvasRef.current, // Sử dụng canvas DOM element
+      });
+    };
+
+    // Dọn dẹp khi component unmount
     return () => {
-      // Cleanup nếu cần sau này
-      document.body.removeChild(script);
+      document.body.removeChild(script); // Xóa script khi component unmount
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      id="canvas"
-      style={{ width: "100%", height: "auto", background: "black" }}
-    />
+    <div>
+      <canvas ref={canvasRef} style={{ width: '100%', maxWidth: '800px' }} />
+    </div>
   );
-}
+};
 
 export default JSMpegPlayer;
