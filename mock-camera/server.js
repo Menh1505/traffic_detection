@@ -11,9 +11,9 @@ async function createServer() {
       clientPort: 6554,
       rtpPortStart: 10000,
       rtpPortCount: 10000,
-      keepAliveTimeout: 30000,
       keepAlive: true,
-      maxRetries: 3,
+      keepAliveTimeout: 30000,
+      maxretries: 5,
       retryDelay: 5000,
     });
 
@@ -36,18 +36,8 @@ async function run() {
     // wait for server to start before starting ffmpeg
     setTimeout(() => {
       ffmpeg(videoPath)
-        .inputOptions("-stream_loop -1") // Lặp lại video vô hạn
-        .outputOptions([
-          "-c:v libx264", // Sử dụng codec video libx264
-          "-f rtsp", // Định dạng RTSP
-          "-rtsp_transport tcp", // Sử dụng giao thức TCP để ổn định hơn
-          "-preset ultrafast", // Tăng tốc độ mã hóa (giảm độ trễ)
-          "-tune zerolatency", // Tối ưu hóa cho streaming thời gian thực
-          "-g 50", // Đặt khoảng cách giữa các keyframe (GOP size)
-          "-bufsize 64k", // Giảm kích thước buffer để giảm độ trễ
-          "-maxrate 1M", // Giới hạn bitrate tối đa (1 Mbps)
-          "-an", // Không có âm thanh
-        ])
+        .inputOptions("-stream_loop -1")
+        .outputOptions(["-f rtsp", "-an"])
         .output(`rtsp://localhost:5554/live`)
         .on("start", function (commandLine) {
           console.log("FFmpeg process started:", commandLine);
@@ -60,14 +50,6 @@ async function run() {
         })
         .run();
     }, 2000);
-
-    // Check server status every minute
-    setInterval(() => {
-      if (!server.isRunning) {
-        console.error("Server is not running. Restarting...");
-        run();
-      }
-    }, 60000); // Kiểm tra trạng thái server mỗi phút
   } catch (error) {
     console.error("Error starting server:", error);
   }
