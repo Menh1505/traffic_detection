@@ -3,3 +3,4 @@ torch
 ultralytics
 Pillow
 numpy
+flask
