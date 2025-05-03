@@ -1,12 +1,7 @@
 // src/components/CameraList.tsx
 import React from 'react';
 
-const cameras = [
-    { id: 1, name: 'Ngã tư Hàng Xanh', position: [10.801296448702058, 106.71170362134797] },
-    { id: 2, name: 'Camera 2', position: [10.801276448702058, 106.71270362134698] },
-    { id: 3, name: 'Camera 3', position: [10.801276448702060, 106.71270362134699] },
-]
-const CameraList = ({ mapRef }) => { 
+const CameraList = ({ mapRef, cameras }) => { 
     // Tạo danh sách 20 tên camera giả
 
     const handleCameraClick = (camera) => {
@@ -17,24 +12,25 @@ const CameraList = ({ mapRef }) => {
 
     return (
         <div style={{
-            padding: '10px',
-            backgroundColor: 'white',
+            padding: '0px',
+            backgroundColor: '#1D253A',
             borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            maxHeight: '400px',
+            boxShadow: '0 4px 6px rgba(255, 255, 255, 0.1)',
+            height: '100%',
             overflowY: 'auto',
         }}>
-            <h3>Danh Sách Camera</h3>
+            <h3>DANH SÁCH CAMERA</h3>
             <ul style={{ listStyleType: 'none', padding: 0 }}>
                 {cameras.map((camera) => (
                     <li key={camera.id} style={{ margin: '10px 0' }}>
                         <button
                             onClick={() => handleCameraClick(camera)}
+                            className='camera-button'
                             style={{
                                 padding: '10px',
                                 borderRadius: '5px',
                                 border: 'none',
-                                backgroundColor: 'none',
+                                backgroundColor: '#1D253A',
                                 color: 'white',
                                 cursor: 'pointer',
                                 width: '100%',
@@ -45,6 +41,11 @@ const CameraList = ({ mapRef }) => {
                     </li>
                 ))}
             </ul>
+            <style>{`
+    .camera-button:hover {
+        background-color: #2A334D;
+    }
+`}</style>
         </div>
     );
 };
