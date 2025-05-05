@@ -1,8 +1,22 @@
 const RtspServer = require("rtsp-streaming-server").default;
 const ffmpeg = require("fluent-ffmpeg");
-const portscanner = require("portscanner");
+const os = require("os");
 
-const videoPath = "./videos/test.mp4"; // your video path
+const videoPath = "./videos/0413.mp4"; // your video path
+
+// Hàm lấy địa chỉ IP hiện tại
+function getLocalIpAddress() {
+  const networkInterfaces = os.networkInterfaces();
+  for (const interfaceName in networkInterfaces) {
+    const interfaces = networkInterfaces[interfaceName];
+    for (const iface of interfaces) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address; // Trả về địa chỉ IPv4 không phải localhost
+      }
+    }
+  }
+  return "127.0.0.1"; // Trả về localhost nếu không tìm thấy
+}
 
 // Create server with available ports
 async function createServer() {
@@ -12,6 +26,10 @@ async function createServer() {
       clientPort: 6554,
       rtpPortStart: 10000,
       rtpPortCount: 10000,
+      keepAlive: true,
+      keepAliveTimeout: 30000,
+      maxretries: 5,
+      retryDelay: 5000,
     });
 
     return server;
@@ -23,19 +41,20 @@ async function createServer() {
 // main function to run the server and stream video
 async function run() {
   try {
+    const localIp = getLocalIpAddress();
     // init server
     const server = await createServer();
 
     // start server
     await server.start();
-    console.log(`RTSP server started on rtsp://localhost:5554/live`);
+    console.log(`RTSP server started on rtsp://${localIp}:5554/live`);
 
     // wait for server to start before starting ffmpeg
     setTimeout(() => {
       ffmpeg(videoPath)
         .inputOptions("-stream_loop -1")
-        .outputOptions("-f rtsp")
-        .output(`rtsp://localhost:5554/live`)
+        .outputOptions(["-f rtsp", "-an"])
+        .output(`rtsp://${localIp}:5554/live`)
         .on("start", function (commandLine) {
           console.log("FFmpeg process started:", commandLine);
         })
