@@ -51,8 +51,8 @@ const TrafficDashboard: React.FC = () => {
 
     return (
         <div className="traffic-dashboard">
-            <h2>Thống Kê Giao Thông Theo Tuần</h2>
             <div className="chart-container">
+                <h2>Thống Kê Giao Thông Theo Tuần</h2>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ flex: 0.7 }}>
                         <ResponsiveContainer width="100%" height="100%">
@@ -116,6 +116,7 @@ const TrafficDashboard: React.FC = () => {
 
                 .chart-container {
                     margin: 20px 0;
+                    backgroundColor: '#1D253A';
                 }
             `}</style>
         </div>

@@ -41,6 +41,10 @@ const cameras = [
     { id: 2, name: 'Ngã tư Bạch Đằng', position: [10.803062, 106.709385] },
     { id: 3, name: 'Trường UTH', position: [10.804268, 106.716693] },
     { id: 4, name: 'Ngã tư D2', position: [10.807563, 106.716395] },
+    { id: 5, name: 'Đại học Hồng Bàng', position: [10.799973, 106.707279] },
+    { id: 6, name: '153 D. Xô Viết Nghệ Tĩnh', position: [10.797149, 106.710626] },
+    { id: 7, name: 'Khu du lịch Văn Thánh', position: [10.799673, 106.717575] },
+    { id: 8, name: '426A D. Xô Viết Nghệ Tĩnh', position: [10.806265, 106.711538] },
 ];
 
 export default function Map() {
@@ -56,7 +60,7 @@ export default function Map() {
     }, []);
 
     return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             {/* Header/Navbar */}
             <Navbar />
 
@@ -65,6 +69,7 @@ export default function Map() {
                 {/* Left Sidebar */}
                 <aside style={{
                     width: '35%',
+                    height: '50vh',
                     backgroundColor: '#141B2D',
                     padding: '5px',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
