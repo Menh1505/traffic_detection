@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import cameraIcon from '../assets/camera-icon.png';
 import { useEffect, useState, useRef } from 'react';
-import cam1 from '../assets/cam2.png';
+import cam1 from '../assets/0413.mp4';
 import TrafficDashboard from './TrafficDashboard';
 import CameraList from './CameraList';
 import Navbar from './navbar';
@@ -49,6 +49,7 @@ const cameras = [
 
 export default function Map() {
     const [isStuck, setIsStuck] = useState(false);
+    const [currentCameraId, setCurrentCameraId] = useState(null);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -75,7 +76,7 @@ export default function Map() {
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                     zIndex: 1000,
                 }}>
-                    <CameraList mapRef={mapRef} cameras={cameras} />
+                    <CameraList mapRef={mapRef} cameras={cameras} setCurrentCameraId={setCurrentCameraId}/>
                 </aside>
 
                 {/* Primary Content Area */}
@@ -95,7 +96,15 @@ export default function Map() {
                             <Marker key={camera.id} position={camera.position} icon={customIcon}>
                                 <Popup style={{ width: '450px' }}>
                                     <h1>{camera.name}</h1>
-                                    <img src={cam1} alt="Camera View" style={{ width: '100%' }} />
+                                    <video
+    src={cam1}
+    style={{ width: '100%' }}
+    alt="Camera View"
+    onPause={(e) => e.target.play()} 
+    autoPlay
+    muted 
+    loop
+/>
                                     <p>Thời gian: 13:00 12/11/2023</p>
                                     <p>
                                         - Đường thoáng <br />
@@ -119,7 +128,7 @@ export default function Map() {
                 boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)',
                 zIndex: 1000,
             }}>
-                <TrafficDashboard />
+                <TrafficDashboard currentCameraId={currentCameraId}/>
             </footer>
         </div>
     );

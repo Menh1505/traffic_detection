@@ -1,12 +1,13 @@
 // src/components/CameraList.tsx
 import React from 'react';
 
-const CameraList = ({ mapRef, cameras }) => { 
+const CameraList = ({ mapRef, cameras, setCurrentCameraId }) => { 
     // Tạo danh sách 20 tên camera giả
 
     const handleCameraClick = (camera) => {
         if (mapRef.current) {
             mapRef.current.setView([camera.position[0], camera.position[1]], 18);
+            setCurrentCameraId(camera.id);
         }
     };
 
