@@ -12,6 +12,7 @@ import {
     PieChart,
     Pie,
     Cell,
+    BarChart,
 } from 'recharts';
 
 const COLORS = ['#8884d8', '#82ca9d'];
@@ -90,6 +91,66 @@ const mockTrafficData = {
         { day: 'CN', totalTraffic: 7000, cars: 5500, trucks: 1500, congestionScore: 75 },
     ],
 };
+
+const mockTrafficByTime = {
+    1: [
+        { time: '6h-7h', traffic: 25 },
+        { time: '8h-9h', traffic: 60 },
+        { time: '10h-12h', traffic: 45 },
+        { time: '13h-15h', traffic: 30 },
+        { time: '16h-18h', traffic: 70 },
+    ],
+    2: [
+        { time: '6h-7h', traffic: 30 },
+        { time: '8h-9h', traffic: 55 },
+        { time: '10h-12h', traffic: 40 },
+        { time: '13h-15h', traffic: 25 },
+        { time: '16h-18h', traffic: 65 },
+    ],
+    3: [
+        { time: '6h-7h', traffic: 20 },
+        { time: '8h-9h', traffic: 65 },
+        { time: '10h-12h', traffic: 50 },
+        { time: '13h-15h', traffic: 35 },
+        { time: '16h-18h', traffic: 75 },
+    ],
+    4: [
+        { time: '6h-7h', traffic: 22 },
+        { time: '8h-9h', traffic: 58 },
+        { time: '10h-12h', traffic: 42 },
+        { time: '13h-15h', traffic: 28 },
+        { time: '16h-18h', traffic: 68 },
+    ],
+    5: [
+        { time: '6h-7h', traffic: 27 },
+        { time: '8h-9h', traffic: 62 },
+        { time: '10h-12h', traffic: 47 },
+        { time: '13h-15h', traffic: 32 },
+        { time: '16h-18h', traffic: 72 },
+    ],
+    6: [
+        { time: '6h-7h', traffic: 24 },
+        { time: '8h-9h', traffic: 59 },
+        { time: '10h-12h', traffic: 44 },
+        { time: '13h-15h', traffic: 29 },
+        { time: '16h-18h', traffic: 69 },
+    ],
+    7: [
+        { time: '6h-7h', traffic: 26 },
+        { time: '8h-9h', traffic: 63 },
+        { time: '10h-12h', traffic: 46 },
+        { time: '13h-15h', traffic: 31 },
+        { time: '16h-18h', traffic: 71 },
+    ],
+    8: [
+        { time: '6h-7h', traffic: 23 },
+        { time: '8h-9h', traffic: 57 },
+        { time: '10h-12h', traffic: 43 },
+        { time: '13h-15h', traffic: 27 },
+        { time: '16h-18h', traffic: 67 },
+    ],
+};
+
 const TrafficDashboard = ({ currentCameraId }) => {
     // Get data for the selected camera
     const data = useMemo(() => {
@@ -106,12 +167,18 @@ const TrafficDashboard = ({ currentCameraId }) => {
         ];
     }, [data]);
 
+    // Data for traffic by time of day
+    const trafficByTimeData = useMemo(() => {
+        return mockTrafficByTime[currentCameraId] || [];
+    }, [currentCameraId]);
+
     return (
         <div className="traffic-dashboard">
             <div className="chart-container">
                 <h2>Thống Kê Giao Thông: Camera {currentCameraId || 'Chưa chọn'}</h2>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div style={{ flex: 0.7 }}>
+                    {/* Chart 1: Composed Chart */}
+                    <div style={{ flex: 0.33, height: '250px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart data={data}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -132,9 +199,11 @@ const TrafficDashboard = ({ currentCameraId }) => {
                             </ComposedChart>
                         </ResponsiveContainer>
                     </div>
-                    <div style={{ flex: 0.3 }}>
+
+                    {/* Chart 2: Pie Chart */}
+                    <div style={{ flex: 0.33, height: '200px' }}>
                         <h3>Phân Tích Lưu Lượng Xe</h3>
-                        <ResponsiveContainer width="100%" height={200}>
+                        <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={pieData}
@@ -152,6 +221,20 @@ const TrafficDashboard = ({ currentCameraId }) => {
                                 </Pie>
                                 <Tooltip />
                             </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Chart 3: Traffic by Time of Day */}
+                    <div style={{ flex: 0.33, height: '200px' }}>
+                        <h3>Phân Tích Lưu Lượng Theo Thời Gian</h3>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={trafficByTimeData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="time" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="traffic" fill="#82ca9d" name="Lưu lượng xe" />
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
